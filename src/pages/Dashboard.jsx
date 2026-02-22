@@ -49,7 +49,7 @@ const Dashboard = () => {
                         Authorization: `Bearer ${userInfo.token}`
                     }
                 };
-                const res = await axios.get('http://localhost:5000/api/dashboard', config);
+                const res = await axios.get('https://saqlain-cloth-house-1.onrender.com/api/dashboard', config);
                 setData(res.data);
                 setLoading(false);
             } catch (err) {

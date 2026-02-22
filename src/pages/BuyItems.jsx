@@ -25,7 +25,7 @@ const BuyItems = () => {
 
     const fetchSellers = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/sellers', {
+            const { data } = await axios.get('https://saqlain-cloth-house-1.onrender.com/api/sellers', {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setSellers(data);
@@ -61,7 +61,7 @@ const BuyItems = () => {
             let sellerId = selectedSeller;
 
             if (isNewSeller) {
-                const { data: newSeller } = await axios.post('http://localhost:5000/api/sellers', {
+                const { data: newSeller } = await axios.post('https://saqlain-cloth-house-1.onrender.com/api/sellers', {
                     name: newSellerName,
                     phone: newSellerPhone
                 }, config);
@@ -73,7 +73,7 @@ const BuyItems = () => {
                 return;
             }
 
-            await axios.post('http://localhost:5000/api/transactions', {
+            await axios.post('https://saqlain-cloth-house-1.onrender.com/api/transactions', {
                 type: 'buy',
                 entityId: sellerId,
                 date,

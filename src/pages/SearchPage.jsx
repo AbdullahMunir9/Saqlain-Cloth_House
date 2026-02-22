@@ -23,7 +23,7 @@ const SearchPage = () => {
         setLoading(true);
         setSearched(true);
         try {
-            const { data } = await axios.get(`http://localhost:5000/api/search?query=${query}`, {
+            const { data } = await axios.get(`https://saqlain-cloth-house-1.onrender.com/api/search?query=${query}`, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setResults(data);

@@ -30,7 +30,7 @@ const BuyersLedger = () => {
 
     const fetchBuyers = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/buyers', {
+            const { data } = await axios.get('https://saqlain-cloth-house-1.onrender.com/api/buyers', {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setBuyers(data);
@@ -47,8 +47,8 @@ const BuyersLedger = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
             const [txRes, payRes] = await Promise.all([
-                axios.get(`http://localhost:5000/api/transactions?entityId=${buyer._id}&type=sell`, config),
-                axios.get(`http://localhost:5000/api/payments?entityId=${buyer._id}&type=receive`, config)
+                axios.get(`https://saqlain-cloth-house-1.onrender.com/api/transactions?entityId=${buyer._id}&type=sell`, config),
+                axios.get(`https://saqlain-cloth-house-1.onrender.com/api/payments?entityId=${buyer._id}&type=receive`, config)
             ]);
 
             // Combine and sort chronologically
@@ -66,7 +66,7 @@ const BuyersLedger = () => {
     const handleAddPayment = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/payments', {
+            await axios.post('https://saqlain-cloth-house-1.onrender.com/api/payments', {
                 type: 'receive',
                 entityId: selectedBuyer._id,
                 amount: Number(paymentAmount),

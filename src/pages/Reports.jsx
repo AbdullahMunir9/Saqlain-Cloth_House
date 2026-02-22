@@ -28,9 +28,9 @@ const Reports = () => {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
             const [salesRes, buyersRes, sellersRes] = await Promise.all([
-                axios.get(`http://localhost:5000/api/reports/sales-summary?startDate=${startDate}&endDate=${endDate}`, config),
-                axios.get(`http://localhost:5000/api/reports/top-buyers?limit=5`, config),
-                axios.get(`http://localhost:5000/api/reports/top-sellers?limit=5`, config)
+                axios.get(`https://saqlain-cloth-house-1.onrender.com/api/reports/sales-summary?startDate=${startDate}&endDate=${endDate}`, config),
+                axios.get(`https://saqlain-cloth-house-1.onrender.com/api/reports/top-buyers?limit=5`, config),
+                axios.get(`https://saqlain-cloth-house-1.onrender.com/api/reports/top-sellers?limit=5`, config)
             ]);
 
             setSalesSummary(salesRes.data);
