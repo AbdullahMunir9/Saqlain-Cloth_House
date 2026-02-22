@@ -8,4 +8,9 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
+  preview: {
+    allowedHosts: [
+      'saqlain-cloth-house.onrender.com'
+    ]
+  }
 })
