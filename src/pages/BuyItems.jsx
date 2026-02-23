@@ -147,8 +147,8 @@ const BuyItems = () => {
                         <thead className="bg-gray-50 border-y border-gray-200 text-sm">
                             <tr>
                                 <th className="p-3 font-semibold">{t('Item Name')}</th>
-                                <th className="p-3 font-semibold w-24">{t('Quantity')}</th>
-                                <th className="p-3 font-semibold w-32">{t('Price/Unit')}</th>
+                                <th className="p-3 font-semibold w-24">{t('Meters')}</th>
+                                <th className="p-3 font-semibold w-32">{t('Price/Meter')}</th>
                                 <th className="p-3 font-semibold w-32">{t('Total')}</th>
                                 <th className="p-3 font-semibold w-12 cursor-pointer text-center text-primary" onClick={addItemRow}><Plus size={20} className="mx-auto" /></th>
                             </tr>

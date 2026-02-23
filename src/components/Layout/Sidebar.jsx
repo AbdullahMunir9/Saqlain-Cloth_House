@@ -31,7 +31,7 @@ const Sidebar = () => {
             <div className="h-full flex flex-col">
                 <div className="flex items-center justify-center h-16 border-b border-gray-100 px-4">
                     <h1 className="text-xl font-bold text-primary truncate">
-                        {t('Saklain Cloth House')}
+                        {t('Saqlain Cloth House')}
                     </h1>
                 </div>
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
