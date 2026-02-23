@@ -1,4 +1,6 @@
 import Seller from '../models/Seller.js';
+import Transaction from '../models/Transaction.js';
+import Payment from '../models/Payment.js';
 
 // @desc    Get all sellers
 // @route   GET /api/sellers
@@ -83,12 +85,17 @@ export const deleteSeller = async (req, res) => {
         const seller = await Seller.findById(req.params.id);
 
         if (seller) {
+            // Delete all related transactions and payments
+            await Transaction.deleteMany({ entityId: seller._id, type: 'buy' });
+            await Payment.deleteMany({ entityId: seller._id, type: 'pay' });
+
             await seller.deleteOne();
-            res.json({ message: 'Seller removed' });
+            res.json({ message: 'Seller and associated records removed' });
         } else {
             res.status(404).json({ message: 'Seller not found' });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
 };

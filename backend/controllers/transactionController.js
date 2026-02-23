@@ -106,3 +106,46 @@ export const getTransactionById = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// @desc    Delete transaction
+// @route   DELETE /api/transactions/:id
+// @access  Private
+// Deleting a transaction should reverse its effect on the buyer/seller
+export const deleteTransaction = async (req, res) => {
+    try {
+        const transaction = await Transaction.findById(req.params.id);
+
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+
+        let entity;
+        const totalBill = transaction.totalBill;
+        const paymentAmount = transaction.paidNow;
+
+        if (transaction.type === 'sell') {
+            entity = await Buyer.findById(transaction.entityId);
+            if (entity) {
+                entity.totalBoughtAmount -= totalBill;
+                entity.totalPaidAmount -= paymentAmount;
+                entity.totalRemainingAmount -= (totalBill - paymentAmount);
+                await entity.save();
+            }
+        } else if (transaction.type === 'buy') {
+            entity = await Seller.findById(transaction.entityId);
+            if (entity) {
+                entity.totalPurchasedAmount -= totalBill;
+                entity.totalPaidAmount -= paymentAmount;
+                entity.totalRemainingAmount -= (totalBill - paymentAmount);
+                await entity.save();
+            }
+        }
+
+        await Transaction.deleteOne({ _id: req.params.id });
+
+        res.json({ message: 'Transaction removed' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error deleting transaction' });
+    }
+};

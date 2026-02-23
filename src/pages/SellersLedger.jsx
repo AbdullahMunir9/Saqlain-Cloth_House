@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Eye, DollarSign, X } from 'lucide-react';
+import { Eye, DollarSign, X, Trash2 } from 'lucide-react';
 
 const SellersLedger = () => {
     const { t } = useTranslation();
@@ -63,6 +63,30 @@ const SellersLedger = () => {
         }
     };
 
+    const handleDeleteRecord = async (record) => {
+        if (!window.confirm('Are you sure you want to delete this record? This action cannot be undone and will update the ledger balances.')) {
+            return;
+        }
+
+        try {
+            const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+
+            if (record.kind === 'Purchase') {
+                await axios.delete(`https://saqlain-cloth-house-1.onrender.com/api/transactions/${record._id}`, config);
+            } else if (record.kind === 'Payment') {
+                await axios.delete(`https://saqlain-cloth-house-1.onrender.com/api/payments/${record._id}`, config);
+            }
+
+            // Refresh the ledger modal data and the main sellers list
+            fetchSellers();
+            // Re-fetch ledger data to update view accurately
+            handleViewLedger(selectedSeller);
+        } catch (error) {
+            console.error('Error deleting record', error);
+            alert(error.response?.data?.message || 'Error deleting record');
+        }
+    };
+
     const handleAddPayment = async (e) => {
         e.preventDefault();
         try {
@@ -81,6 +105,21 @@ const SellersLedger = () => {
             fetchSellers(); // Refresh list to get updated remaining amount
         } catch (error) {
             alert(error.response?.data?.message || 'Error processing payment');
+        }
+    };
+
+    const handleDeleteSeller = async (sellerId) => {
+        if (!window.confirm('WARNING: Are you sure you want to delete this seller? This will also permanently delete ALL associated transactions and payments. This action CANNOT be undone.')) {
+            return;
+        }
+
+        try {
+            const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+            await axios.delete(`https://saqlain-cloth-house-1.onrender.com/api/sellers/${sellerId}`, config);
+            fetchSellers();
+        } catch (error) {
+            console.error('Error deleting seller', error);
+            alert(error.response?.data?.message || 'Error deleting seller');
         }
     };
 
@@ -141,6 +180,13 @@ const SellersLedger = () => {
                                             >
                                                 <DollarSign size={18} />
                                             </button>
+                                            <button
+                                                onClick={() => handleDeleteSeller(seller._id)}
+                                                className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors"
+                                                title="Delete Seller & All Records"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -199,13 +245,13 @@ const SellersLedger = () => {
             {/* FULL LEDGER MODAL */}
             {showLedgerModal && selectedSeller && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center py-10 px-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-full flex flex-col overflow-hidden">
+                    <div id="print-modal" className="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-full flex flex-col overflow-hidden">
                         <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gray-50">
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-900">{selectedSeller.name} - Ledger Statement</h2>
                                 <p className="text-gray-600 text-sm mt-1">Current Payable: <span className="font-bold text-red-600">Rs. {selectedSeller.totalRemainingAmount.toLocaleString()}</span></p>
                             </div>
-                            <button onClick={() => setShowLedgerModal(false)} className="text-gray-400 hover:text-gray-600 p-2">
+                            <button onClick={() => setShowLedgerModal(false)} className="text-gray-400 hover:text-gray-600 p-2 no-print">
                                 <X size={24} />
                             </button>
                         </div>
@@ -223,6 +269,7 @@ const SellersLedger = () => {
                                             <th className="p-3 text-right">Credit (Bill)</th>
                                             <th className="p-3 text-right">Debit (Paid)</th>
                                             <th className="p-3 text-right text-red-600">Balance</th>
+                                            <th className="p-3 text-center no-print">Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -250,15 +297,24 @@ const SellersLedger = () => {
                                                 <td className="p-3 text-right font-bold text-gray-900 border-l border-gray-100 ml-2">
                                                     Rs. {(record.remainingAfterTransaction ?? record.remainingAfterPayment).toLocaleString()}
                                                 </td>
+                                                <td className="p-3 text-center no-print">
+                                                    <button
+                                                        onClick={() => handleDeleteRecord(record)}
+                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                                        title="Delete Record"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             )}
                         </div>
-                        <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end">
-                            <button className="px-6 py-2 bg-gray-800 text-white rounded font-medium hover:bg-gray-900 transition-colors">
-                                Print Statement (Coming Soon)
+                        <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end no-print">
+                            <button onClick={() => window.print()} className="px-6 py-2 bg-gray-800 text-white rounded font-medium hover:bg-gray-900 transition-colors">
+                                Print Statement
                             </button>
                         </div>
                     </div>

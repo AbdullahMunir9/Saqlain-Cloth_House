@@ -92,3 +92,43 @@ export const getPaymentById = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// @desc    Delete a payment
+// @route   DELETE /api/payments/:id
+// @access  Private
+// Deleting a payment should reverse its effect on the buyer/seller
+export const deletePayment = async (req, res) => {
+    try {
+        const payment = await Payment.findById(req.params.id);
+
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        let entity;
+        const paymentAmount = payment.amount;
+
+        if (payment.type === 'receive') {
+            entity = await Buyer.findById(payment.entityId);
+            if (entity) {
+                entity.totalPaidAmount -= paymentAmount;
+                entity.totalRemainingAmount += paymentAmount;
+                await entity.save();
+            }
+        } else if (payment.type === 'pay') {
+            entity = await Seller.findById(payment.entityId);
+            if (entity) {
+                entity.totalPaidAmount -= paymentAmount;
+                entity.totalRemainingAmount += paymentAmount;
+                await entity.save();
+            }
+        }
+
+        await Payment.deleteOne({ _id: req.params.id });
+
+        res.json({ message: 'Payment removed' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error deleting payment' });
+    }
+};

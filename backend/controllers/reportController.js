@@ -59,6 +59,63 @@ export const getReports = async (req, res) => {
     }
 };
 
+// @desc    Get Sales Summary
+// @route   GET /api/reports/sales-summary
+// @access  Private
+export const getSalesSummary = async (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+        let query = {};
+        if (startDate && endDate) {
+            query.date = {
+                $gte: new Date(startDate),
+                $lte: new Date(new Date(endDate).setHours(23, 59, 59, 999))
+            };
+        }
+
+        const transactions = await Transaction.find(query);
+        const totalTransactions = transactions.length;
+
+        const totalSales = transactions
+            .filter(t => t.type === 'sell')
+            .reduce((acc, t) => acc + (t.totalBill || 0), 0);
+
+        const totalPurchases = transactions
+            .filter(t => t.type === 'buy')
+            .reduce((acc, t) => acc + (t.totalBill || 0), 0);
+
+        res.json({ totalTransactions, totalSales, totalPurchases });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error generating sales summary' });
+    }
+};
+
+// @desc    Get Top Buyers
+// @route   GET /api/reports/top-buyers
+// @access  Private
+export const getTopBuyers = async (req, res) => {
+    try {
+        const limit = Number(req.query.limit) || 5;
+        const topBuyers = await Buyer.find({}).sort({ totalBoughtAmount: -1 }).limit(limit);
+        res.json(topBuyers);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error fetching top buyers' });
+    }
+};
+
+// @desc    Get Top Sellers
+// @route   GET /api/reports/top-sellers
+// @access  Private
+export const getTopSellers = async (req, res) => {
+    try {
+        const limit = Number(req.query.limit) || 5;
+        const topSellers = await Seller.find({}).sort({ totalPurchasedAmount: -1 }).limit(limit);
+        res.json(topSellers);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error fetching top sellers' });
+    }
+};
+
 // @desc    Global search (buyers, sellers)
 // @route   GET /api/search
 // @access  Private

@@ -17,3 +17,26 @@ html[dir="rtl"] {
 html[dir="ltr"] {
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-modal, #print-modal * {
+    visibility: visible;
+  }
+  #print-modal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+

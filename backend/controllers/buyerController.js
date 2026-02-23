@@ -1,4 +1,6 @@
 import Buyer from '../models/Buyer.js';
+import Transaction from '../models/Transaction.js';
+import Payment from '../models/Payment.js';
 
 // @desc    Get all buyers
 // @route   GET /api/buyers
@@ -83,15 +85,17 @@ export const deleteBuyer = async (req, res) => {
         const buyer = await Buyer.findById(req.params.id);
 
         if (buyer) {
-            // Note: In a real production system, we should either soft delete
-            // or also delete/re-assign all related transactions and payments.
-            // For simplicity, we just delete the buyer.
+            // Delete all related transactions and payments
+            await Transaction.deleteMany({ entityId: buyer._id, type: 'sell' });
+            await Payment.deleteMany({ entityId: buyer._id, type: 'receive' });
+
             await buyer.deleteOne();
-            res.json({ message: 'Buyer removed' });
+            res.json({ message: 'Buyer and associated records removed' });
         } else {
             res.status(404).json({ message: 'Buyer not found' });
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Server error' });
     }
 };
