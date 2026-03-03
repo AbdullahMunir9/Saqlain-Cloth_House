@@ -9,7 +9,7 @@ import SellItems from './pages/SellItems';
 import BuyersLedger from './pages/BuyersLedger';
 import Reports from './pages/Reports';
 import SearchPage from './pages/SearchPage';
-import Settings from './pages/Settings';
+import Stock from './pages/Stock';
 
 const App = () => {
   return (
@@ -25,7 +25,7 @@ const App = () => {
           <Route path="buyers" element={<BuyersLedger />} />
           <Route path="reports" element={<Reports />} />
           <Route path="search" element={<SearchPage />} />
-          <Route path="settings" element={<Settings />} />
+          <Route path="stock" element={<Stock />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -9,7 +9,7 @@ import {
     BookOpen,
     FileText,
     Search,
-    Settings
+    Archive
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -23,7 +23,7 @@ const Sidebar = () => {
         { name: t('Buyers Ledger'), path: '/buyers', icon: <BookOpen size={20} /> },
         { name: t('Reports'), path: '/reports', icon: <FileText size={20} /> },
         { name: t('Search Records'), path: '/search', icon: <Search size={20} /> },
-        { name: t('Settings'), path: '/settings', icon: <Settings size={20} /> },
+        { name: t('Stock'), path: '/stock', icon: <Archive size={20} /> },
     ];
 
     return (

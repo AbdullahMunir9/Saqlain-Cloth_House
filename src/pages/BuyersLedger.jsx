@@ -30,7 +30,7 @@ const BuyersLedger = () => {
 
     const fetchBuyers = async () => {
         try {
-            const { data } = await axios.get('https://saqlain-cloth-house-1.onrender.com/api/buyers', {
+            const { data } = await axios.get('http://localhost:5000/api/buyers', {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setBuyers(data);
@@ -47,8 +47,8 @@ const BuyersLedger = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
             const [txRes, payRes] = await Promise.all([
-                axios.get(`https://saqlain-cloth-house-1.onrender.com/api/transactions?entityId=${buyer._id}&type=sell`, config),
-                axios.get(`https://saqlain-cloth-house-1.onrender.com/api/payments?entityId=${buyer._id}&type=receive`, config)
+                axios.get(`http://localhost:5000/api/transactions?entityId=${buyer._id}&type=sell`, config),
+                axios.get(`http://localhost:5000/api/payments?entityId=${buyer._id}&type=receive`, config)
             ]);
 
             // Combine and sort chronologically
@@ -72,9 +72,9 @@ const BuyersLedger = () => {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
             if (record.kind === 'Sale') {
-                await axios.delete(`https://saqlain-cloth-house-1.onrender.com/api/transactions/${record._id}`, config);
+                await axios.delete(`http://localhost:5000/api/transactions/${record._id}`, config);
             } else if (record.kind === 'Payment') {
-                await axios.delete(`https://saqlain-cloth-house-1.onrender.com/api/payments/${record._id}`, config);
+                await axios.delete(`http://localhost:5000/api/payments/${record._id}`, config);
             }
 
             // Refresh the ledger modal data and the main buyers list
@@ -90,7 +90,7 @@ const BuyersLedger = () => {
     const handleAddPayment = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('https://saqlain-cloth-house-1.onrender.com/api/payments', {
+            await axios.post('http://localhost:5000/api/payments', {
                 type: 'receive',
                 entityId: selectedBuyer._id,
                 amount: Number(paymentAmount),
@@ -115,7 +115,7 @@ const BuyersLedger = () => {
 
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-            await axios.delete(`https://saqlain-cloth-house-1.onrender.com/api/buyers/${buyerId}`, config);
+            await axios.delete(`http://localhost:5000/api/buyers/${buyerId}`, config);
             fetchBuyers();
         } catch (error) {
             console.error('Error deleting buyer', error);
