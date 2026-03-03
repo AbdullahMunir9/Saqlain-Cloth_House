@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import API_BASE_URL from '../api';
 import { Eye, DollarSign, X, Trash2 } from 'lucide-react';
 
 const SellersLedger = () => {
@@ -30,7 +31,7 @@ const SellersLedger = () => {
 
     const fetchSellers = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/sellers', {
+            const { data } = await axios.get(`${API_BASE_URL}/sellers`, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setSellers(data);
@@ -47,8 +48,8 @@ const SellersLedger = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
             const [txRes, payRes] = await Promise.all([
-                axios.get(`http://localhost:5000/api/transactions?entityId=${seller._id}&type=buy`, config),
-                axios.get(`http://localhost:5000/api/payments?entityId=${seller._id}&type=pay`, config)
+                axios.get(`${API_BASE_URL}/transactions?entityId=${seller._id}&type=buy`, config),
+                axios.get(`${API_BASE_URL}/payments?entityId=${seller._id}&type=pay`, config)
             ]);
 
             // Combine and sort chronologically
@@ -72,9 +73,9 @@ const SellersLedger = () => {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
             if (record.kind === 'Purchase') {
-                await axios.delete(`http://localhost:5000/api/transactions/${record._id}`, config);
+                await axios.delete(`${API_BASE_URL}/transactions/${record._id}`, config);
             } else if (record.kind === 'Payment') {
-                await axios.delete(`http://localhost:5000/api/payments/${record._id}`, config);
+                await axios.delete(`${API_BASE_URL}/payments/${record._id}`, config);
             }
 
             // Refresh the ledger modal data and the main sellers list
@@ -90,7 +91,7 @@ const SellersLedger = () => {
     const handleAddPayment = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/payments', {
+            await axios.post(`${API_BASE_URL}/payments`, {
                 type: 'pay',
                 entityId: selectedSeller._id,
                 amount: Number(paymentAmount),
@@ -115,7 +116,7 @@ const SellersLedger = () => {
 
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
-            await axios.delete(`http://localhost:5000/api/sellers/${sellerId}`, config);
+            await axios.delete(`${API_BASE_URL}/sellers/${sellerId}`, config);
             fetchSellers();
         } catch (error) {
             console.error('Error deleting seller', error);

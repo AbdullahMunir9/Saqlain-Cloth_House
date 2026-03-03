@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import API_BASE_URL from '../api';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -49,7 +50,7 @@ const Dashboard = () => {
                         Authorization: `Bearer ${userInfo.token}`
                     }
                 };
-                const res = await axios.get('http://localhost:5000/api/dashboard', config);
+                const res = await axios.get(`${API_BASE_URL}/dashboard`, config);
                 setData(res.data);
                 setLoading(false);
             } catch (err) {

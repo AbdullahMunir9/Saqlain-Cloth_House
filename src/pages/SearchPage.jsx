@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import API_BASE_URL from '../api';
 import { Search as SearchIcon, User, Archive } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,7 +24,7 @@ const SearchPage = () => {
         setLoading(true);
         setSearched(true);
         try {
-            const { data } = await axios.get(`http://localhost:5000/api/search?query=${query}`, {
+            const { data } = await axios.get(`${API_BASE_URL}/search?query=${query}`, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setResults(data);

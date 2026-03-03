@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { setCredentials } from '../store/authSlice';
 import { useTranslation } from 'react-i18next';
+import API_BASE_URL from '../api';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -18,7 +19,7 @@ const Login = () => {
         e.preventDefault();
         try {
             const config = { headers: { 'Content-Type': 'application/json' } };
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password }, config);
+            const { data } = await axios.post(`${API_BASE_URL}/auth/login`, { email, password }, config);
             dispatch(setCredentials(data));
             navigate('/');
         } catch (err) {
