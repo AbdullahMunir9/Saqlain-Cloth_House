@@ -15,12 +15,15 @@ const SellItems = () => {
     const [isNewBuyer, setIsNewBuyer] = useState(false);
 
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    const [items, setItems] = useState([{ itemName: '', quantity: 1, pricePerUnit: 0 }]);
+    const [items, setItems] = useState([{ itemId: '', itemName: '', quantity: 1, pricePerUnit: 0 }]);
     const [paidNow, setPaidNow] = useState(0);
     const [notes, setNotes] = useState('');
 
+    const [availableItems, setAvailableItems] = useState([]);
+
     useEffect(() => {
         fetchBuyers();
+        fetchAvailableItems();
     }, []);
 
     const fetchBuyers = async () => {
@@ -34,14 +37,38 @@ const SellItems = () => {
         }
     };
 
+    const fetchAvailableItems = async () => {
+        try {
+            const { data } = await axios.get('https://saqlain-cloth-house-1.onrender.com/api/items?inStock=true', {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            setAvailableItems(data);
+        } catch (error) {
+            console.error('Error fetching available items', error);
+        }
+    };
+
     const handleItemChange = (index, field, value) => {
         const newItems = [...items];
-        newItems[index][field] = value;
+
+        if (field === 'itemId') {
+            const selectedStockItem = availableItems.find(i => i._id === value);
+            newItems[index].itemId = value;
+            if (selectedStockItem) {
+                newItems[index].itemName = selectedStockItem.itemName;
+                newItems[index].pricePerUnit = selectedStockItem.purchasePrice;
+            } else {
+                newItems[index].itemName = '';
+            }
+        } else {
+            newItems[index][field] = value;
+        }
+
         setItems(newItems);
     };
 
     const addItemRow = () => {
-        setItems([...items, { itemName: '', quantity: 1, pricePerUnit: 0 }]);
+        setItems([...items, { itemId: '', itemName: '', quantity: 1, pricePerUnit: 0 }]);
     };
 
     const removeItemRow = (index) => {
@@ -84,7 +111,7 @@ const SellItems = () => {
 
             alert('Sale saved successfully!');
             // Reset form
-            setItems([{ itemName: '', quantity: 1, pricePerUnit: 0 }]);
+            setItems([{ itemId: '', itemName: '', quantity: 1, pricePerUnit: 0 }]);
             setPaidNow(0);
             setNotes('');
             setIsNewBuyer(false);
@@ -92,6 +119,7 @@ const SellItems = () => {
             setNewBuyerPhone('');
             setSelectedBuyer('');
             fetchBuyers();
+            fetchAvailableItems();
 
         } catch (error) {
             alert(error.response?.data?.message || 'Error saving sale');
@@ -157,7 +185,19 @@ const SellItems = () => {
                             {items.map((item, index) => (
                                 <tr key={index} className="border-b border-gray-100">
                                     <td className="p-2">
-                                        <input type="text" required className="w-full p-2 border border-gray-300 rounded" value={item.itemName} onChange={e => handleItemChange(index, 'itemName', e.target.value)} placeholder="e.g. Silk Cloth" />
+                                        <select
+                                            required
+                                            className="w-full p-2 border border-gray-300 rounded outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                                            value={item.itemId}
+                                            onChange={e => handleItemChange(index, 'itemId', e.target.value)}
+                                        >
+                                            <option value="">-- Select Item --</option>
+                                            {availableItems.map(availableItem => (
+                                                <option key={availableItem._id} value={availableItem._id}>
+                                                    {availableItem.itemName} ({availableItem.stock}m available)
+                                                </option>
+                                            ))}
+                                        </select>
                                     </td>
                                     <td className="p-2">
                                         <input type="number" min="1" required className="w-full p-2 border border-gray-300 rounded" value={item.quantity} onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} />

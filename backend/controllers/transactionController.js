@@ -1,6 +1,7 @@
 import Transaction from '../models/Transaction.js';
 import Buyer from '../models/Buyer.js';
 import Seller from '../models/Seller.js';
+import Item from '../models/Item.js';
 
 // @desc    Get all transactions (can filter by entityId)
 // @route   GET /api/transactions
@@ -66,17 +67,73 @@ export const createTransaction = async (req, res) => {
             return res.status(400).json({ message: 'Invalid transaction type' });
         }
 
+        const enrichedItems = [];
+
+        // Handle Item Logic
+        for (const item of items) {
+            let dbItem = null;
+
+            if (type === 'buy') {
+                // Find existing item from this seller or create a new one
+                dbItem = await Item.findOne({
+                    itemName: { $regex: new RegExp(`^${item.itemName}$`, 'i') },
+                    sellerId: entityId
+                });
+
+                if (dbItem) {
+                    dbItem.stock += item.quantity;
+                    dbItem.purchasePrice = item.pricePerUnit; // update to latest price?
+                    await dbItem.save();
+                } else {
+                    dbItem = new Item({
+                        itemName: item.itemName,
+                        sellerId: entityId,
+                        stock: item.quantity,
+                        purchasePrice: item.pricePerUnit
+                    });
+                    await dbItem.save();
+                }
+            } else if (type === 'sell') {
+                // Determine item from existing stock (item._id should ideally be passed)
+                // Assuming item._id is passed as itemId from frontend
+                const itemId = item.itemId;
+                if (itemId) {
+                    dbItem = await Item.findById(itemId);
+                } else {
+                    // Fallback, try to find by name 
+                    dbItem = await Item.findOne({
+                        itemName: { $regex: new RegExp(`^${item.itemName}$`, 'i') },
+                        stock: { $gt: 0 }
+                    });
+                }
+
+                if (!dbItem) {
+                    return res.status(400).json({ message: `Item inventory not found for: ${item.itemName}` });
+                }
+
+                if (dbItem.stock < item.quantity) {
+                    return res.status(400).json({ message: `Not enough stock for ${item.itemName}. Available: ${dbItem.stock}` });
+                }
+
+                dbItem.stock -= item.quantity;
+                await dbItem.save();
+            }
+
+            enrichedItems.push({
+                itemId: dbItem ? dbItem._id : null,
+                itemName: item.itemName,
+                quantity: item.quantity,
+                pricePerUnit: item.pricePerUnit,
+                total: item.quantity * item.pricePerUnit
+            });
+        }
+
         const transaction = new Transaction({
             type,
             entityId,
             entityModel: type === 'buy' ? 'Seller' : 'Buyer',
             date: date || Date.now(),
-            items: items.map(item => ({
-                itemName: item.itemName,
-                quantity: item.quantity,
-                pricePerUnit: item.pricePerUnit,
-                total: item.quantity * item.pricePerUnit
-            })),
+            items: enrichedItems,
             totalBill,
             paidNow: paymentAmount,
             remainingAfterTransaction: newRemaining,
@@ -131,6 +188,18 @@ export const deleteTransaction = async (req, res) => {
                 entity.totalRemainingAmount -= (totalBill - paymentAmount);
                 await entity.save();
             }
+
+            // Restore item stock, user sold this but now deleted the sale
+            for (const item of transaction.items) {
+                // Try to restore by name if it matches, to simplify logic
+                const dbItem = await Item.findOne({
+                    itemName: { $regex: new RegExp(`^${item.itemName}$`, 'i') }
+                });
+                if (dbItem) {
+                    dbItem.stock += item.quantity;
+                    await dbItem.save();
+                }
+            }
         } else if (transaction.type === 'buy') {
             entity = await Seller.findById(transaction.entityId);
             if (entity) {
@@ -138,6 +207,18 @@ export const deleteTransaction = async (req, res) => {
                 entity.totalPaidAmount -= paymentAmount;
                 entity.totalRemainingAmount -= (totalBill - paymentAmount);
                 await entity.save();
+            }
+
+            // Restore stock back to the old value
+            for (const item of transaction.items) {
+                const dbItem = await Item.findOne({
+                    itemName: { $regex: new RegExp(`^${item.itemName}$`, 'i') },
+                    sellerId: transaction.entityId
+                });
+                if (dbItem) {
+                    dbItem.stock -= item.quantity;
+                    await dbItem.save();
+                }
             }
         }
 

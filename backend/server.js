@@ -3,13 +3,14 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 
-import authRoutes from './routes/authRoutes.js';
 import buyerRoutes from './routes/buyerRoutes.js';
 import sellerRoutes from './routes/sellerRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
-import paymentRoutes from './routes/paymentRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import itemRoutes from './routes/itemRoutes.js';
 
 dotenv.config();
 
@@ -24,9 +25,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/buyers', buyerRoutes);
 app.use('/api/sellers', sellerRoutes);
 app.use('/api/transactions', transactionRoutes);
-app.use('/api/payments', paymentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-app.use('/api', reportRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/items', itemRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');
