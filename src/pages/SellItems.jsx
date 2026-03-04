@@ -63,7 +63,11 @@ const SellItems = () => {
                 newItems[index].availableQuantity = 0;
             }
         } else {
-            newItems[index][field] = value;
+            let finalValue = value;
+            if (field === 'quantity' && newItems[index].availableQuantity > 0) {
+                finalValue = Math.min(value, newItems[index].availableQuantity);
+            }
+            newItems[index][field] = finalValue;
         }
 
         setItems(newItems);
@@ -216,7 +220,7 @@ const SellItems = () => {
                                         </span>
                                     </td>
                                     <td className="p-2">
-                                        <input type="number" min="1" required className="w-full p-2 border border-gray-300 rounded" value={item.quantity} onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} />
+                                        <input type="number" min="1" max={item.availableQuantity || 1} required className="w-full p-2 border border-gray-300 rounded" value={item.quantity} onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} />
                                     </td>
                                     <td className="p-2">
                                         <input type="number" min="0" required className="w-full p-2 border border-gray-300 rounded" value={item.pricePerUnit} onChange={e => handleItemChange(index, 'pricePerUnit', Number(e.target.value))} />
