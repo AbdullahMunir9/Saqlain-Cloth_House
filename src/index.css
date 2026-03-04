@@ -22,9 +22,12 @@ html[dir="ltr"] {
   body * {
     visibility: hidden;
   }
-  #print-modal, #print-modal * {
+
+  #print-modal,
+  #print-modal * {
     visibility: visible;
   }
+
   #print-modal {
     position: absolute;
     left: 0;
@@ -35,12 +38,8 @@ html[dir="ltr"] {
     box-shadow: none !important;
     border: none !important;
   }
+
   .no-print {
     display: none !important;
   }
 }
-
-.table-container {
-  @apply overflow-x-auto w-full -mx-4 px-4 sm:mx-0 sm:px-0;
-}
-

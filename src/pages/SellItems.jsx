@@ -184,8 +184,8 @@ const SellItems = () => {
                 </div>
 
                 {/* Items List */}
-                <div className="table-container">
-                    <table className="w-full text-left min-w-[700px]">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
                         <thead className="bg-gray-50 border-y border-gray-200 text-sm">
                             <tr>
                                 <th className="p-3 font-semibold">{t('Item Name')}</th>
@@ -265,13 +265,10 @@ const SellItems = () => {
                 </div>
 
                 {/* Submit */}
-                <div className="flex flex-col gap-4 pt-6">
-                    <button type="submit" className="w-full bg-primary hover:bg-primary-dark text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-md">
+                <div className="flex justify-end pt-4">
+                    <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-md">
                         <Save size={20} />
                         {t('Save Sale')}
-                    </button>
-                    <button type="button" onClick={() => window.location.reload()} className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg font-bold transition-all no-print">
-                        {t('Cancel')}
                     </button>
                 </div>
             </form>
