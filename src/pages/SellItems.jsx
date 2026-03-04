@@ -15,7 +15,7 @@ const SellItems = () => {
     const [isNewBuyer, setIsNewBuyer] = useState(false);
 
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-    const [items, setItems] = useState([{ itemId: '', itemName: '', quantity: 1, pricePerUnit: 0 }]);
+    const [items, setItems] = useState([{ itemId: '', itemName: '', quantity: 1, availableQuantity: 0, pricePerUnit: 0 }]);
     const [paidNow, setPaidNow] = useState(0);
     const [notes, setNotes] = useState('');
 
@@ -56,9 +56,11 @@ const SellItems = () => {
             newItems[index].itemId = value;
             if (selectedStockItem) {
                 newItems[index].itemName = selectedStockItem.itemName;
+                newItems[index].availableQuantity = selectedStockItem.stock;
                 newItems[index].pricePerUnit = selectedStockItem.purchasePrice;
             } else {
                 newItems[index].itemName = '';
+                newItems[index].availableQuantity = 0;
             }
         } else {
             newItems[index][field] = value;
@@ -68,7 +70,7 @@ const SellItems = () => {
     };
 
     const addItemRow = () => {
-        setItems([...items, { itemId: '', itemName: '', quantity: 1, pricePerUnit: 0 }]);
+        setItems([...items, { itemId: '', itemName: '', quantity: 1, availableQuantity: 0, pricePerUnit: 0 }]);
     };
 
     const removeItemRow = (index) => {
@@ -98,6 +100,14 @@ const SellItems = () => {
             if (!buyerId) {
                 alert('Please select or create a buyer');
                 return;
+            }
+
+            // Validation: Ensure quantity doesn't exceed available stock
+            for (const item of items) {
+                if (item.quantity > item.availableQuantity) {
+                    alert(`${t('Error')}: ${t('Not enough stock for')} ${item.itemName}. ${t('Available')}: ${item.availableQuantity}m`);
+                    return;
+                }
             }
 
             await axios.post('https://saqlain-cloth-house-1.onrender.com/api/transactions', {
@@ -175,6 +185,7 @@ const SellItems = () => {
                         <thead className="bg-gray-50 border-y border-gray-200 text-sm">
                             <tr>
                                 <th className="p-3 font-semibold">{t('Item Name')}</th>
+                                <th className="p-3 font-semibold w-24 text-center">{t('Available')}</th>
                                 <th className="p-3 font-semibold w-24">{t('Meters')}</th>
                                 <th className="p-3 font-semibold w-32">{t('Price/Meter')}</th>
                                 <th className="p-3 font-semibold w-32">{t('Total')}</th>
@@ -198,6 +209,11 @@ const SellItems = () => {
                                                 </option>
                                             ))}
                                         </select>
+                                    </td>
+                                    <td className="p-2 text-center">
+                                        <span className={`px-2 py-1 rounded text-sm font-bold ${item.availableQuantity < item.quantity ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                            {item.availableQuantity}m
+                                        </span>
                                     </td>
                                     <td className="p-2">
                                         <input type="number" min="1" required className="w-full p-2 border border-gray-300 rounded" value={item.quantity} onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} />
