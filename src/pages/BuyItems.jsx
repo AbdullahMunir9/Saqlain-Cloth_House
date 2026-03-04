@@ -20,10 +20,13 @@ const BuyItems = () => {
     const [notes, setNotes] = useState('');
 
     const [sellerItems, setSellerItems] = useState([]);
+    const [masterProducts, setMasterProducts] = useState([]);
 
     useEffect(() => {
         fetchSellers();
+        fetchMasterProducts();
     }, []);
+
 
     useEffect(() => {
         if (selectedSeller && !isNewSeller) {
@@ -55,7 +58,20 @@ const BuyItems = () => {
         }
     };
 
+    const fetchMasterProducts = async () => {
+        try {
+            const { data } = await axios.get('https://saqlain-cloth-house-1.onrender.com/api/products', {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            setMasterProducts(data);
+        } catch (error) {
+            console.error('Error fetching master products', error);
+        }
+    };
+
+
     const handleItemChange = (index, field, value) => {
+
         const newItems = [...items];
         newItems[index][field] = value;
 
@@ -186,22 +202,22 @@ const BuyItems = () => {
                         <tbody>
                             {items.map((item, index) => (
                                 <tr key={index} className="border-b border-gray-100">
-                                    <td className="p-2 relative">
-                                        <input
-                                            type="text"
-                                            list={`item-suggestions-${index}`}
+                                    <td className="p-2">
+                                        <select
                                             required
-                                            className="w-full p-2 border border-gray-300 rounded"
+                                            className="w-full p-2 border border-gray-300 rounded outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                                             value={item.itemName}
                                             onChange={e => handleItemChange(index, 'itemName', e.target.value)}
-                                            placeholder="e.g. Cotton Suit"
-                                        />
-                                        <datalist id={`item-suggestions-${index}`}>
-                                            {sellerItems.map(si => (
-                                                <option key={si._id} value={si.itemName} />
+                                        >
+                                            <option value="">-- {t('Select Item')} --</option>
+                                            {masterProducts.map(mp => (
+                                                <option key={mp._id} value={mp.name}>
+                                                    {mp.name}
+                                                </option>
                                             ))}
-                                        </datalist>
+                                        </select>
                                     </td>
+
                                     <td className="p-2">
                                         <input type="number" min="1" required className="w-full p-2 border border-gray-300 rounded" value={item.quantity} onChange={e => handleItemChange(index, 'quantity', Number(e.target.value))} />
                                     </td>

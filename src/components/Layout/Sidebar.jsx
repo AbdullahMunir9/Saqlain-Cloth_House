@@ -9,8 +9,10 @@ import {
     BookOpen,
     FileText,
     Search,
-    Archive
+    Archive,
+    PlusCircle
 } from 'lucide-react';
+
 
 const Sidebar = () => {
     const { t } = useTranslation();
@@ -24,7 +26,9 @@ const Sidebar = () => {
         { name: t('Reports'), path: '/reports', icon: <FileText size={20} /> },
         { name: t('Search Records'), path: '/search', icon: <Search size={20} /> },
         { name: t('Stock'), path: '/stock', icon: <Archive size={20} /> },
+        { name: t('new item +'), path: '/products', icon: <PlusCircle size={20} /> },
     ];
+
 
     return (
         <aside className="w-64 bg-white shadow-xl flex-shrink-0 min-h-screen rtl:border-l ltr:border-r border-gray-200">

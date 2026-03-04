@@ -10,6 +10,8 @@ import BuyersLedger from './pages/BuyersLedger';
 import Reports from './pages/Reports';
 import SearchPage from './pages/SearchPage';
 import Stock from './pages/Stock';
+import ProductsCRUD from './pages/ProductsCRUD';
+
 
 const App = () => {
   return (
@@ -26,7 +28,9 @@ const App = () => {
           <Route path="reports" element={<Reports />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="stock" element={<Stock />} />
+          <Route path="products" element={<ProductsCRUD />} />
         </Route>
+
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

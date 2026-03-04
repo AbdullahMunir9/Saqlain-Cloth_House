@@ -11,6 +11,8 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+
 
 dotenv.config();
 
@@ -29,6 +31,8 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/products', productRoutes);
+
 
 app.get('/', (req, res) => {
     res.send('API is running...');
