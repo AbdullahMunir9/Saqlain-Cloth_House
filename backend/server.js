@@ -12,6 +12,8 @@ import authRoutes from './routes/authRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import searchRoutes from './routes/searchRoutes.js';
+
 
 
 dotenv.config();
@@ -32,6 +34,8 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/search', searchRoutes);
+
 
 
 app.get('/', (req, res) => {
