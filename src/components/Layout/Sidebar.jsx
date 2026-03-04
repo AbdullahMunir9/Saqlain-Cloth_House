@@ -10,11 +10,12 @@ import {
     FileText,
     Search,
     Archive,
-    PlusCircle
+    PlusCircle,
+    X
 } from 'lucide-react';
 
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, toggleSidebar }) => {
     const { t } = useTranslation();
 
     const navItems = [
@@ -31,18 +32,26 @@ const Sidebar = () => {
 
 
     return (
-        <aside className="w-64 bg-white shadow-xl flex-shrink-0 min-h-screen rtl:border-l ltr:border-r border-gray-200">
+        <aside className={`
+            fixed lg:static inset-y-0 left-0 z-30 w-64 bg-white shadow-xl flex-shrink-0 min-h-screen 
+            rtl:border-l ltr:border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+            ${isOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full lg:translate-x-0'}
+        `}>
             <div className="h-full flex flex-col">
-                <div className="flex items-center justify-center h-16 border-b border-gray-100 px-4">
+                <div className="flex items-center justify-between h-16 border-b border-gray-100 px-4">
                     <h1 className="text-xl font-bold text-primary truncate">
                         {t('Saqlain Cloth House')}
                     </h1>
+                    <button onClick={toggleSidebar} className="lg:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-lg">
+                        <X size={24} />
+                    </button>
                 </div>
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                     {navItems.map((item) => (
                         <NavLink
                             key={item.path}
                             to={item.path}
+                            onClick={() => { if (window.innerWidth < 1024) toggleSidebar(); }}
                             className={({ isActive }) =>
                                 `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
                                     ? 'bg-primary/10 text-primary font-semibold'

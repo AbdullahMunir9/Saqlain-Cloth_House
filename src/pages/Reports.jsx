@@ -57,16 +57,16 @@ const Reports = () => {
                     {t('Reports & Analytics')}
                 </h1>
 
-                <form onSubmit={handleFilter} className="flex gap-3 bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                    <div className="flex items-center gap-2 px-2">
+                <form onSubmit={handleFilter} className="flex flex-col md:flex-row gap-3 bg-white p-3 md:p-2 rounded-lg shadow-sm border border-gray-100 w-full md:w-auto">
+                    <div className="flex items-center justify-between md:justify-start gap-2 px-2">
                         <Calendar size={18} className="text-gray-400" />
-                        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent" />
+                        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent flex-1 md:flex-none" />
                     </div>
-                    <span className="text-gray-300">|</span>
-                    <div className="flex items-center gap-2 px-2">
-                        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent" />
+                    <span className="hidden md:block text-gray-300">|</span>
+                    <div className="flex items-center justify-between md:justify-start gap-2 px-2">
+                        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent flex-1 md:flex-none" />
                     </div>
-                    <button type="submit" className="bg-primary text-white px-4 py-1.5 rounded text-sm font-medium hover:bg-primary-dark transition-colors">
+                    <button type="submit" className="bg-primary text-white px-4 py-2 md:py-1.5 rounded text-sm font-medium hover:bg-primary-dark transition-colors w-full md:w-auto">
                         Apply
                     </button>
                 </form>
@@ -102,8 +102,8 @@ const Reports = () => {
                             <div className="p-4 border-b border-gray-100 bg-gray-50">
                                 <h2 className="text-lg font-bold text-gray-800">Top 5 Buyers (By Volume)</h2>
                             </div>
-                            <div className="p-0">
-                                <table className="w-full text-left text-sm">
+                            <div className="p-0 table-container">
+                                <table className="w-full text-left text-sm min-w-[400px]">
                                     <thead className="bg-white text-gray-500 border-b border-gray-100">
                                         <tr>
                                             <th className="p-4 font-medium">Rank</th>
@@ -129,8 +129,8 @@ const Reports = () => {
                             <div className="p-4 border-b border-gray-100 bg-gray-50">
                                 <h2 className="text-lg font-bold text-gray-800">Top 5 Sellers (By Volume)</h2>
                             </div>
-                            <div className="p-0">
-                                <table className="w-full text-left text-sm">
+                            <div className="p-0 table-container">
+                                <table className="w-full text-left text-sm min-w-[400px]">
                                     <thead className="bg-white text-gray-500 border-b border-gray-100">
                                         <tr>
                                             <th className="p-4 font-medium">Rank</th>

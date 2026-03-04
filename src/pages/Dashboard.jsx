@@ -76,7 +76,7 @@ const Dashboard = () => {
                 <h1 className="text-2xl font-bold text-gray-800">{t('Dashboard')}</h1>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
                 <StatCard
                     title={t("Total Pending Payable")}
                     value={`Rs. ${data.totals.payable.toLocaleString()}`}
@@ -115,7 +115,7 @@ const Dashboard = () => {
                     <TrendingUp className="text-green-600" size={24} />
                     <h2 className="text-xl font-bold text-gray-800">{t('Realized Profit by Product')}</h2>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="table-container">
                     <table className="w-full text-left">
                         <thead className="bg-white text-gray-500 text-xs uppercase tracking-wider border-b border-gray-100">
                             <tr>
@@ -163,7 +163,7 @@ const Dashboard = () => {
                 {data.today.transactions.length === 0 ? (
                     <p className="text-gray-500">No transactions today.</p>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <div className="table-container">
                         <table className="w-full text-left text-sm text-gray-600">
                             <thead className="bg-gray-50 text-gray-700 uppercase">
                                 <tr>

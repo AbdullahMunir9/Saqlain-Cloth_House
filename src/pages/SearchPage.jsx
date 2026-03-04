@@ -41,22 +41,22 @@ const SearchPage = () => {
     };
 
     return (
-        <div className="max-w-5xl mx-auto space-y-6">
-            <h1 className="text-2xl font-bold text-gray-800">{t('Search Records')}</h1>
+        <div className="max-w-5xl mx-auto space-y-6 px-4 md:px-0">
+            <h1 className="text-2xl font-bold text-gray-800 text-center md:text-left">{t('Search Records')}</h1>
 
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <form onSubmit={handleSearch} className="flex gap-4">
+                <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1">
                         <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input
                             type="text"
-                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-primary focus:ring-1 focus:ring-primary text-lg"
+                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg outline-none focus:border-primary focus:ring-1 focus:ring-primary text-base md:text-lg"
                             placeholder={t('Search by name or phone...')}
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                         />
                     </div>
-                    <button type="submit" className="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-lg font-bold transition-colors shadow-md">
+                    <button type="submit" className="bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-lg font-bold transition-colors shadow-md w-full md:w-auto">
                         {t('Search')}
                     </button>
                 </form>

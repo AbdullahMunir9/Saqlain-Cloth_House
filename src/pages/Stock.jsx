@@ -30,7 +30,7 @@ const Stock = () => {
     };
 
     return (
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div className="max-w-6xl mx-auto space-y-6 px-4 md:px-0">
             <div className="flex items-center gap-3">
                 <div className="p-3 bg-primary/10 rounded-lg text-primary">
                     <Archive size={28} />
@@ -39,8 +39,8 @@ const Stock = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                <div className="table-container">
+                    <table className="w-full text-left min-w-[700px]">
                         <thead className="bg-gray-50 border-b border-gray-200 text-sm whitespace-nowrap">
                             <tr>
                                 <th className="px-6 py-4 font-semibold text-gray-700">{t('Item Name')}</th>

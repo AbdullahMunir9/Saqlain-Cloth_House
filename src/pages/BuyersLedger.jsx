@@ -128,12 +128,12 @@ const BuyersLedger = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 max-w-7xl mx-auto px-4 md:px-0">
                 <h1 className="text-2xl font-bold text-gray-800">{t('Buyers Ledger')}</h1>
                 <input
                     type="text"
                     placeholder="Search buyers..."
-                    className="p-2 border border-gray-300 rounded outline-none focus:border-primary w-64"
+                    className="p-2 border border-gray-300 rounded outline-none focus:border-primary w-full md:w-64"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -143,8 +143,8 @@ const BuyersLedger = () => {
                 {loading ? (
                     <div className="p-8 text-center text-gray-500">Loading...</div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm text-gray-700">
+                    <div className="table-container">
+                        <table className="w-full text-left text-sm text-gray-700 min-w-[800px]">
                             <thead className="bg-gray-50 uppercase font-semibold text-gray-600 border-b border-gray-200">
                                 <tr>
                                     <th className="px-6 py-4">Buyer Name</th>
@@ -261,56 +261,58 @@ const BuyersLedger = () => {
                             {ledgerData.length === 0 ? (
                                 <p className="text-center text-gray-500 py-10">No transactions recorded yet.</p>
                             ) : (
-                                <table className="w-full text-left text-sm">
-                                    <thead className="bg-slate-100 text-gray-700 uppercase font-medium">
-                                        <tr>
-                                            <th className="p-3">Date</th>
-                                            <th className="p-3">Type</th>
-                                            <th className="p-3">Details</th>
-                                            <th className="p-3 text-right">Debit (Bill)</th>
-                                            <th className="p-3 text-right">Credit (Paid)</th>
-                                            <th className="p-3 text-right text-red-600">Balance</th>
-                                            <th className="p-3 text-center no-print">Delete</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {ledgerData.map((record, idx) => (
-                                            <tr key={record._id} className="border-b border-gray-100 hover:bg-gray-50">
-                                                <td className="p-3 whitespace-nowrap text-gray-600">{new Date(record.date).toLocaleDateString()}</td>
-                                                <td className="p-3">
-                                                    <span className={`px-2 py-1 rounded text-xs font-semibold ${record.kind === 'Sale' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}`}>
-                                                        {record.kind}
-                                                    </span>
-                                                </td>
-                                                <td className="p-3 text-gray-600 max-w-xs truncate">
-                                                    {record.kind === 'Sale'
-                                                        ? record.items.map(i => `${i.itemName} (${i.quantity})`).join(', ')
-                                                        : record.notes || 'Standalone Payment'}
-                                                </td>
-                                                <td className="p-3 text-right font-medium text-red-600">
-                                                    {record.kind === 'Sale' ? `Rs. ${record.totalBill.toLocaleString()}` : '-'}
-                                                </td>
-                                                <td className="p-3 text-right font-medium text-green-600">
-                                                    {record.kind === 'Sale'
-                                                        ? (record.paidNow > 0 ? `Rs. ${record.paidNow.toLocaleString()}` : '-')
-                                                        : `Rs. ${record.amount.toLocaleString()}`}
-                                                </td>
-                                                <td className="p-3 text-right font-bold text-gray-900 border-l border-gray-100 ml-2">
-                                                    Rs. {(record.remainingAfterTransaction ?? record.remainingAfterPayment).toLocaleString()}
-                                                </td>
-                                                <td className="p-3 text-center no-print">
-                                                    <button
-                                                        onClick={() => handleDeleteRecord(record)}
-                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-full transition-colors"
-                                                        title="Delete Record"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </td>
+                                <div className="table-container">
+                                    <table className="w-full text-left text-sm min-w-[700px]">
+                                        <thead className="bg-slate-100 text-gray-700 uppercase font-medium">
+                                            <tr>
+                                                <th className="p-3">Date</th>
+                                                <th className="p-3">Type</th>
+                                                <th className="p-3">Details</th>
+                                                <th className="p-3 text-right">Debit (Bill)</th>
+                                                <th className="p-3 text-right">Credit (Paid)</th>
+                                                <th className="p-3 text-right text-red-600">Balance</th>
+                                                <th className="p-3 text-center no-print">Delete</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {ledgerData.map((record, idx) => (
+                                                <tr key={record._id} className="border-b border-gray-100 hover:bg-gray-50">
+                                                    <td className="p-3 whitespace-nowrap text-gray-600">{new Date(record.date).toLocaleDateString()}</td>
+                                                    <td className="p-3">
+                                                        <span className={`px-2 py-1 rounded text-xs font-semibold ${record.kind === 'Sale' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}`}>
+                                                            {record.kind}
+                                                        </span>
+                                                    </td>
+                                                    <td className="p-3 text-gray-600 max-w-xs truncate">
+                                                        {record.kind === 'Sale'
+                                                            ? record.items.map(i => `${i.itemName} (${i.quantity})`).join(', ')
+                                                            : record.notes || 'Standalone Payment'}
+                                                    </td>
+                                                    <td className="p-3 text-right font-medium text-red-600">
+                                                        {record.kind === 'Sale' ? `Rs. ${record.totalBill.toLocaleString()}` : '-'}
+                                                    </td>
+                                                    <td className="p-3 text-right font-medium text-green-600">
+                                                        {record.kind === 'Sale'
+                                                            ? (record.paidNow > 0 ? `Rs. ${record.paidNow.toLocaleString()}` : '-')
+                                                            : `Rs. ${record.amount.toLocaleString()}`}
+                                                    </td>
+                                                    <td className="p-3 text-right font-bold text-gray-900 border-l border-gray-100 ml-2">
+                                                        Rs. {(record.remainingAfterTransaction ?? record.remainingAfterPayment).toLocaleString()}
+                                                    </td>
+                                                    <td className="p-3 text-center no-print">
+                                                        <button
+                                                            onClick={() => handleDeleteRecord(record)}
+                                                            className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-full transition-colors"
+                                                            title="Delete Record"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             )}
                         </div>
                         <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end no-print">

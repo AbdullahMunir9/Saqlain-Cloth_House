@@ -85,7 +85,7 @@ const ProductsCRUD = () => {
             <h1 className="text-2xl font-bold text-gray-800">{t('Manage Items (New Item +)')}</h1>
 
             {/* Add Product Form */}
-            <form onSubmit={handleAddProduct} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex gap-4">
+            <form onSubmit={handleAddProduct} className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4">
                 <input
                     type="text"
                     placeholder={t('Enter product name (e.g. Cotton, Washing Wear)')}
@@ -97,7 +97,7 @@ const ProductsCRUD = () => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors disabled:opacity-50 w-full md:w-auto"
                 >
                     <Plus size={20} />
                     {t('Add Item')}
@@ -106,61 +106,63 @@ const ProductsCRUD = () => {
 
             {/* Products Table */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <table className="w-full text-left">
-                    <thead className="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th className="p-4 font-semibold text-gray-700">{t('Product Name')}</th>
-                            <th className="p-4 font-semibold text-gray-700 w-32 text-center">{t('Actions')}</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {products.map((product) => (
-                            <tr key={product._id} className="hover:bg-gray-50 transition-colors">
-                                <td className="p-4 text-gray-700">
-                                    {editingId === product._id ? (
-                                        <input
-                                            type="text"
-                                            className="w-full p-2 border border-primary rounded outline-none"
-                                            value={editName}
-                                            onChange={(e) => setEditName(e.target.value)}
-                                            autoFocus
-                                        />
-                                    ) : (
-                                        product.name
-                                    )}
-                                </td>
-                                <td className="p-4 flex justify-center gap-2">
-                                    {editingId === product._id ? (
-                                        <>
-                                            <button onClick={() => handleUpdateProduct(product._id)} className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-colors">
-                                                <Save size={18} />
-                                            </button>
-                                            <button onClick={() => setEditingId(null)} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
-                                                <X size={18} />
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <button onClick={() => startEditing(product)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
-                                                <Edit2 size={18} />
-                                            </button>
-                                            <button onClick={() => handleDeleteProduct(product._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors">
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                        {products.length === 0 && (
+                <div className="table-container">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <td colSpan="2" className="p-8 text-center text-gray-500 italic">
-                                    {t('No products added yet.')}
-                                </td>
+                                <th className="p-4 font-semibold text-gray-700">{t('Product Name')}</th>
+                                <th className="p-4 font-semibold text-gray-700 w-32 text-center">{t('Actions')}</th>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {products.map((product) => (
+                                <tr key={product._id} className="hover:bg-gray-50 transition-colors">
+                                    <td className="p-4 text-gray-700">
+                                        {editingId === product._id ? (
+                                            <input
+                                                type="text"
+                                                className="w-full p-2 border border-primary rounded outline-none"
+                                                value={editName}
+                                                onChange={(e) => setEditName(e.target.value)}
+                                                autoFocus
+                                            />
+                                        ) : (
+                                            product.name
+                                        )}
+                                    </td>
+                                    <td className="p-4 flex justify-center gap-2">
+                                        {editingId === product._id ? (
+                                            <>
+                                                <button onClick={() => handleUpdateProduct(product._id)} className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-colors">
+                                                    <Save size={18} />
+                                                </button>
+                                                <button onClick={() => setEditingId(null)} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors">
+                                                    <X size={18} />
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button onClick={() => startEditing(product)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                                                    <Edit2 size={18} />
+                                                </button>
+                                                <button onClick={() => handleDeleteProduct(product._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors">
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                            {products.length === 0 && (
+                                <tr>
+                                    <td colSpan="2" className="p-8 text-center text-gray-500 italic">
+                                        {t('No products added yet.')}
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

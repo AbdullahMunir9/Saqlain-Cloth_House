@@ -6,17 +6,29 @@ import Topbar from './Topbar';
 
 const MainLayout = () => {
     const { userInfo } = useSelector((state) => state.auth);
+    const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
     if (!userInfo) {
         return <Navigate to="/login" replace />;
     }
 
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
     return (
-        <div className="flex min-h-screen bg-slate-50 w-full overflow-hidden">
-            <Sidebar />
+        <div className="flex min-h-screen bg-slate-50 w-full overflow-hidden relative">
+            {/* Mobile Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                ></div>
+            )}
+
+            <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
             <div className="flex-1 flex flex-col h-screen overflow-hidden">
-                <Topbar />
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6">
+                <Topbar toggleSidebar={toggleSidebar} />
+                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-4 md:p-6">
                     <Outlet />
                 </main>
             </div>
