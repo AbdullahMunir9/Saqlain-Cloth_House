@@ -3,26 +3,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import API_BASE_URL from '../api';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { DollarSign, ShoppingBag, Users, UserCheck, TrendingUp } from 'lucide-react';
-
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-);
+import { DollarSign, Users, UserCheck, TrendingUp } from 'lucide-react';
 
 const StatCard = ({ title, value, icon, colorClass }) => (
     <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 flex items-center justify-between">
@@ -128,8 +109,53 @@ const Dashboard = () => {
                 />
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mt-8 max-w-5xl">
-                <Bar options={chartOptions} data={chartData} />
+            {/* Realized Profit Section */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-8 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
+                    <TrendingUp className="text-green-600" size={24} />
+                    <h2 className="text-xl font-bold text-gray-800">{t('Realized Profit by Product')}</h2>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead className="bg-white text-gray-500 text-xs uppercase tracking-wider border-b border-gray-100">
+                            <tr>
+                                <th className="px-6 py-4 font-bold">{t('Product Name')}</th>
+                                <th className="px-6 py-4 font-bold text-center">{t('Avg. Buy Rate')}</th>
+                                <th className="px-6 py-4 font-bold text-center">{t('Avg. Sell Rate')}</th>
+                                <th className="px-6 py-4 font-bold text-center">{t('Total Sold')}</th>
+                                <th className="px-6 py-4 font-bold text-right">{t('Total Profit')}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                            {data.profitStats.map((stat, index) => (
+                                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                    <td className="px-6 py-4 font-bold text-gray-800">{stat.itemName}</td>
+                                    <td className="px-6 py-4 text-center text-gray-600">Rs. {stat.avgBuyPrice.toFixed(2)}</td>
+                                    <td className="px-6 py-4 text-center text-gray-600">Rs. {stat.avgSellPrice.toFixed(2)}</td>
+                                    <td className="px-6 py-4 text-center font-medium">{stat.totalSold}m</td>
+                                    <td className={`px-6 py-4 text-right font-bold ${stat.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                        Rs. {stat.totalProfit.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                    </td>
+                                </tr>
+                            ))}
+                            {data.profitStats.length === 0 && (
+                                <tr>
+                                    <td colSpan="5" className="px-6 py-10 text-center text-gray-500 italic">No sales data available yet.</td>
+                                </tr>
+                            )}
+                        </tbody>
+                        {data.profitStats.length > 0 && (
+                            <tfoot className="bg-gray-50 font-bold border-t-2 border-gray-100">
+                                <tr>
+                                    <td colSpan="4" className="px-6 py-4 text-right text-gray-700">{t('Net Combined Profit')}:</td>
+                                    <td className={`px-6 py-4 text-right text-xl ${data.profitStats.reduce((acc, s) => acc + s.totalProfit, 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                        Rs. {data.profitStats.reduce((acc, s) => acc + s.totalProfit, 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        )}
+                    </table>
+                </div>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mt-8">

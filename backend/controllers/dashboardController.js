@@ -59,6 +59,47 @@ export const getDashboardSummary = async (req, res) => {
             }
         });
 
+        // 5. Profit Stats per Product
+        const profitStatsGrouped = await Transaction.aggregate([
+            { $unwind: "$items" },
+            {
+                $group: {
+                    _id: { itemName: "$items.itemName", type: "$type" },
+                    totalQuantity: { $sum: "$items.quantity" },
+                    totalAmount: { $sum: { $multiply: ["$items.quantity", "$items.pricePerUnit"] } }
+                }
+            }
+        ]);
+
+        const profitMap = {};
+        profitStatsGrouped.forEach(stat => {
+            const { itemName, type } = stat._id;
+            if (!profitMap[itemName]) {
+                profitMap[itemName] = { buyQty: 0, buyAmount: 0, sellQty: 0, sellAmount: 0 };
+            }
+            if (type === 'buy') {
+                profitMap[itemName].buyQty += stat.totalQuantity;
+                profitMap[itemName].buyAmount += stat.totalAmount;
+            } else {
+                profitMap[itemName].sellQty += stat.totalQuantity;
+                profitMap[itemName].sellAmount += stat.totalAmount;
+            }
+        });
+
+        const profitStats = Object.keys(profitMap).map(name => {
+            const data = profitMap[name];
+            const avgBuyPrice = data.buyQty > 0 ? data.buyAmount / data.buyQty : 0;
+            const avgSellPrice = data.sellQty > 0 ? data.sellAmount / data.sellQty : 0;
+            const profit = data.sellAmount - (data.sellQty * avgBuyPrice);
+            return {
+                itemName: name,
+                avgBuyPrice,
+                avgSellPrice,
+                totalSold: data.sellQty,
+                totalProfit: profit
+            };
+        }).sort((a, b) => b.totalProfit - a.totalProfit);
+
         res.json({
             totals: {
                 receivable: totalReceivable,
@@ -71,7 +112,8 @@ export const getDashboardSummary = async (req, res) => {
                 totalAmount: todaysTotalBill,
                 transactions: todaysTransactions
             },
-            monthlyChart: monthlyData
+            monthlyChart: monthlyData,
+            profitStats
         });
 
     } catch (error) {
