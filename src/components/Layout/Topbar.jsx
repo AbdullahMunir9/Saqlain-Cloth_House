@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Globe } from 'lucide-react';
+import { LogOut, Globe, Menu } from 'lucide-react';
 import { logout } from '../../store/authSlice';
 
-const Topbar = () => {
+const Topbar = ({ toggleSidebar }) => {
     const { i18n } = useTranslation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -29,8 +29,14 @@ const Topbar = () => {
     };
 
     return (
-        <header className="h-16 bg-white shadow-sm flex items-center justify-end px-6 relative z-10 border-b border-gray-200">
-            <div className="flex items-center gap-6">
+        <header className="h-16 bg-white shadow-sm flex items-center justify-between px-4 md:px-6 relative z-10 border-b border-gray-200">
+            <button
+                onClick={toggleSidebar}
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg md:hidden"
+            >
+                <Menu size={24} />
+            </button>
+            <div className="flex items-center gap-6 ms-auto">
                 <button
                     onClick={toggleLanguage}
                     className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"

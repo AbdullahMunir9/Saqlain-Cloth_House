@@ -188,8 +188,8 @@ const BuyItems = () => {
                 </div>
 
                 {/* Items List */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 -mx-6 md:mx-0">
+                    <table className="w-full text-left min-w-[800px]">
                         <thead className="bg-gray-50 border-y border-gray-200 text-sm">
                             <tr>
                                 <th className="p-3 font-semibold">{t('Item Name')}</th>

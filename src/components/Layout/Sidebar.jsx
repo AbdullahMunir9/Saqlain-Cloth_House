@@ -10,12 +10,14 @@ import {
     FileText,
     Search,
     Archive,
-    PlusCircle
+    PlusCircle,
+    X
 } from 'lucide-react';
 
 
-const Sidebar = () => {
-    const { t } = useTranslation();
+const Sidebar = ({ isOpen, toggle }) => {
+    const { t, i18n } = useTranslation();
+    const isRtl = i18n.language === 'ur';
 
     const navItems = [
         { name: t('Dashboard'), path: '/', icon: <LayoutDashboard size={20} /> },
@@ -31,12 +33,16 @@ const Sidebar = () => {
 
 
     return (
-        <aside className="w-64 bg-white shadow-xl flex-shrink-0 min-h-screen rtl:border-l ltr:border-r border-gray-200">
+        <aside className={`fixed md:static inset-y-0 ${isRtl ? 'right-0' : 'left-0'} z-30 w-64 bg-white shadow-xl flex-shrink-0 transition-transform duration-300 transform 
+            ${isOpen ? 'translate-x-0' : isRtl ? 'translate-x-full' : '-translate-x-full'} md:translate-x-0 min-h-screen rtl:border-l ltr:border-r border-gray-200`}>
             <div className="h-full flex flex-col">
-                <div className="flex items-center justify-center h-16 border-b border-gray-100 px-4">
+                <div className="flex items-center justify-between md:justify-center h-16 border-b border-gray-100 px-4">
                     <h1 className="text-xl font-bold text-primary truncate">
                         {t('Saqlain Cloth House')}
                     </h1>
+                    <button onClick={toggle} className="p-2 text-gray-500 md:hidden">
+                        <X size={24} />
+                    </button>
                 </div>
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
                     {navItems.map((item) => (
@@ -49,6 +55,7 @@ const Sidebar = () => {
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                 }`
                             }
+                            onClick={() => { if (window.innerWidth < 768) toggle(); }}
                         >
                             {item.icon}
                             <span>{item.name}</span>

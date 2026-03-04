@@ -51,23 +51,23 @@ const Reports = () => {
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
                     <FileText className="text-primary" />
                     {t('Reports & Analytics')}
                 </h1>
 
-                <form onSubmit={handleFilter} className="flex gap-3 bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                    <div className="flex items-center gap-2 px-2">
+                <form onSubmit={handleFilter} className="flex flex-col sm:flex-row gap-3 w-full md:w-auto bg-white p-2 rounded-lg shadow-sm border border-gray-100">
+                    <div className="flex items-center gap-2 px-2 flex-1">
                         <Calendar size={18} className="text-gray-400" />
-                        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent" />
+                        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent w-full" />
                     </div>
-                    <span className="text-gray-300">|</span>
-                    <div className="flex items-center gap-2 px-2">
-                        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent" />
+                    <span className="text-gray-300 hidden sm:block">|</span>
+                    <div className="flex items-center gap-2 px-2 flex-1 border-t sm:border-t-0 pt-2 sm:pt-0">
+                        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="outline-none text-sm text-gray-700 bg-transparent w-full" />
                     </div>
-                    <button type="submit" className="bg-primary text-white px-4 py-1.5 rounded text-sm font-medium hover:bg-primary-dark transition-colors">
-                        Apply
+                    <button type="submit" className="bg-primary text-white px-4 py-2 sm:py-1.5 rounded text-sm font-medium hover:bg-primary-dark transition-colors w-full sm:w-auto">
+                        {t('Apply')}
                     </button>
                 </form>
             </div>
@@ -86,12 +86,12 @@ const Reports = () => {
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-l-4 border-l-green-500 border-gray-100 relative overflow-hidden">
                                 <TrendingUp className="absolute right-[-10px] bottom-[-10px] text-green-50 opacity-50" size={100} />
                                 <p className="text-gray-500 text-sm font-medium mb-1">Total Sales (To Buyers)</p>
-                                <p className="text-3xl font-bold text-gray-900">Rs. {salesSummary.totalSales.toLocaleString()}</p>
+                                <p className="text-2xl lg:text-3xl font-bold text-gray-900">Rs. {salesSummary.totalSales.toLocaleString()}</p>
                             </div>
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-l-4 border-l-red-500 border-gray-100 relative overflow-hidden">
                                 <TrendingDown className="absolute right-[-10px] bottom-[-10px] text-red-50 opacity-50" size={100} />
                                 <p className="text-gray-500 text-sm font-medium mb-1">Total Purchases (From Sellers)</p>
-                                <p className="text-3xl font-bold text-gray-900">Rs. {salesSummary.totalPurchases.toLocaleString()}</p>
+                                <p className="text-2xl lg:text-3xl font-bold text-gray-900">Rs. {salesSummary.totalPurchases.toLocaleString()}</p>
                             </div>
                         </div>
                     )}
@@ -102,8 +102,8 @@ const Reports = () => {
                             <div className="p-4 border-b border-gray-100 bg-gray-50">
                                 <h2 className="text-lg font-bold text-gray-800">Top 5 Buyers (By Volume)</h2>
                             </div>
-                            <div className="p-0">
-                                <table className="w-full text-left text-sm">
+                            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200">
+                                <table className="w-full text-left text-sm min-w-[400px]">
                                     <thead className="bg-white text-gray-500 border-b border-gray-100">
                                         <tr>
                                             <th className="p-4 font-medium">Rank</th>
@@ -129,8 +129,8 @@ const Reports = () => {
                             <div className="p-4 border-b border-gray-100 bg-gray-50">
                                 <h2 className="text-lg font-bold text-gray-800">Top 5 Sellers (By Volume)</h2>
                             </div>
-                            <div className="p-0">
-                                <table className="w-full text-left text-sm">
+                            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200">
+                                <table className="w-full text-left text-sm min-w-[400px]">
                                     <thead className="bg-white text-gray-500 border-b border-gray-100">
                                         <tr>
                                             <th className="p-4 font-medium">Rank</th>

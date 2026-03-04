@@ -46,37 +46,13 @@ const Dashboard = () => {
     if (loading) return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;
     if (!data) return <div className="p-8 text-center text-red-500">Failed to load dashboard data</div>;
 
-    const chartData = {
-        labels: Object.keys(data.monthlyChart).reverse(),
-        datasets: [
-            {
-                label: 'Buy (From Sellers)',
-                data: Object.values(data.monthlyChart).reverse().map(m => m.buy),
-                backgroundColor: 'rgba(239, 68, 68, 0.8)', // Red for expense/buy
-            },
-            {
-                label: 'Sell (To Buyers)',
-                data: Object.values(data.monthlyChart).reverse().map(m => m.sell),
-                backgroundColor: 'rgba(16, 185, 129, 0.8)', // Green for income/sell
-            }
-        ]
-    };
-
-    const chartOptions = {
-        responsive: true,
-        plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Monthly Buy / Sell Summary' }
-        }
-    };
-
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">{t('Dashboard')}</h1>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
                 <StatCard
                     title={t("Total Pending Payable")}
                     value={`Rs. ${data.totals.payable.toLocaleString()}`}
@@ -110,13 +86,13 @@ const Dashboard = () => {
             </div>
 
             {/* Realized Profit Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-8 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6 lg:mt-8 overflow-hidden">
                 <div className="p-6 border-b border-gray-100 bg-gray-50 flex items-center gap-2">
                     <TrendingUp className="text-green-600" size={24} />
                     <h2 className="text-xl font-bold text-gray-800">{t('Realized Profit by Product')}</h2>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200">
+                    <table className="w-full text-left min-w-[700px]">
                         <thead className="bg-white text-gray-500 text-xs uppercase tracking-wider border-b border-gray-100">
                             <tr>
                                 <th className="px-6 py-4 font-bold">{t('Product Name')}</th>
@@ -163,8 +139,8 @@ const Dashboard = () => {
                 {data.today.transactions.length === 0 ? (
                     <p className="text-gray-500">No transactions today.</p>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm text-gray-600">
+                    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200">
+                        <table className="w-full text-left text-sm text-gray-600 min-w-[600px]">
                             <thead className="bg-gray-50 text-gray-700 uppercase">
                                 <tr>
                                     <th className="px-4 py-3">Type</th>

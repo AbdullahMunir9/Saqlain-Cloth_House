@@ -39,8 +39,8 @@ const Stock = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200">
+                    <table className="w-full text-left min-w-[700px]">
                         <thead className="bg-gray-50 border-b border-gray-200 text-sm whitespace-nowrap">
                             <tr>
                                 <th className="px-6 py-4 font-semibold text-gray-700">{t('Item Name')}</th>
@@ -50,7 +50,7 @@ const Stock = () => {
                                 <th className="px-6 py-4 font-semibold text-gray-700">{t('Last Updated')}</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-gray-100 text-sm sm:text-base">
                             {loading ? (
                                 <tr>
                                     <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
