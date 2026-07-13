@@ -22,6 +22,7 @@ const SellItems = () => {
     const [items, setItems] = useState([{ itemId: '', itemName: '', quantity: 1, availableQuantity: 0, pricePerUnit: 0 }]);
     const [paidNow, setPaidNow] = useState(0);
     const [notes, setNotes] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [availableItems, setAvailableItems] = useState([]);
 
@@ -43,7 +44,7 @@ const SellItems = () => {
 
     const fetchAvailableItems = async () => {
         try {
-            const { data } = await axios.get(`${API_BASE_URL}/items?inStock=true`, {
+            const { data } = await axios.get(`${API_BASE_URL}/items?activeOnly=true`, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setAvailableItems(data);
@@ -93,6 +94,9 @@ const SellItems = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
             let buyerId = selectedBuyer;
@@ -141,6 +145,8 @@ const SellItems = () => {
 
         } catch (error) {
             alert(error.response?.data?.message || 'Error saving sale');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -270,9 +276,13 @@ const SellItems = () => {
 
                 {/* Submit */}
                 <div className="flex justify-end pt-4">
-                    <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-md">
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-md disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
+                    >
                         <Save size={20} />
-                        {t('Save Sale')}
+                        {isSubmitting ? 'Saving Sale...' : t('Save Sale')}
                     </button>
                 </div>
             </form>

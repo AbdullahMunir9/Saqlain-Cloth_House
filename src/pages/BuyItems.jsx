@@ -22,6 +22,7 @@ const BuyItems = () => {
     const [items, setItems] = useState([{ itemName: '', quantity: 1, pricePerUnit: 0 }]);
     const [paidNow, setPaidNow] = useState(0);
     const [notes, setNotes] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [sellerItems, setSellerItems] = useState([]);
     const [masterProducts, setMasterProducts] = useState([]);
@@ -106,6 +107,9 @@ const BuyItems = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
             let sellerId = selectedSeller;
@@ -145,6 +149,8 @@ const BuyItems = () => {
 
         } catch (error) {
             alert(error.response?.data?.message || 'Error saving purchase');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -269,9 +275,13 @@ const BuyItems = () => {
 
                 {/* Submit */}
                 <div className="flex justify-end pt-4">
-                    <button type="submit" className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-md">
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition-colors shadow-md disabled:bg-gray-400 disabled:hover:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
+                    >
                         <Save size={20} />
-                        {t('Save Purchase')}
+                        {isSubmitting ? 'Saving Purchase...' : t('Save Purchase')}
                     </button>
                 </div>
             </form>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Archive } from 'lucide-react';
+import { Archive, Trash2 } from 'lucide-react';
 import API_BASE_URL from '../api';
 
 const Stock = () => {
@@ -11,6 +11,7 @@ const Stock = () => {
 
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [clearingItemId, setClearingItemId] = useState(null);
 
     useEffect(() => {
         fetchStock();
@@ -19,7 +20,7 @@ const Stock = () => {
     const fetchStock = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get(`${API_BASE_URL}/items`, {
+            const { data } = await axios.get(`${API_BASE_URL}/items?inStock=true`, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
             setItems(data);
@@ -27,6 +28,26 @@ const Stock = () => {
             console.error('Error fetching stock', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleClearStock = async (item) => {
+        const confirmed = window.confirm(
+            `Are you sure you want to delete all ${item.stock}m of ${item.itemName} from stock? The item itself will remain available for future purchases.`
+        );
+
+        if (!confirmed || clearingItemId) return;
+
+        setClearingItemId(item._id);
+        try {
+            await axios.delete(`${API_BASE_URL}/items/${item._id}/stock`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            setItems((currentItems) => currentItems.filter((currentItem) => currentItem._id !== item._id));
+        } catch (error) {
+            alert(error.response?.data?.message || 'Error clearing stock');
+        } finally {
+            setClearingItemId(null);
         }
     };
 
@@ -49,18 +70,19 @@ const Stock = () => {
                                 <th className="px-6 py-4 font-semibold text-gray-700">{t('Purchase Price / Meter')}</th>
                                 <th className="px-6 py-4 font-semibold text-gray-700">{t('Bought From')}</th>
                                 <th className="px-6 py-4 font-semibold text-gray-700">{t('Last Updated')}</th>
+                                <th className="px-6 py-4 font-semibold text-gray-700 text-center">{t('Actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 text-sm sm:text-base">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
                                         {t('Loading stock...')}
                                     </td>
                                 </tr>
                             ) : items.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
+                                    <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
                                         {t('No stock found.')}
                                     </td>
                                 </tr>
@@ -77,6 +99,17 @@ const Stock = () => {
                                         <td className="px-6 py-4 text-gray-600">{item.sellerId?.name || t('Unknown')}</td>
                                         <td className="px-6 py-4 text-gray-500 text-sm">
                                             {new Date(item.updatedAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <button
+                                                type="button"
+                                                onClick={() => handleClearStock(item)}
+                                                disabled={clearingItemId === item._id}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                                                title="Clear all stock"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))

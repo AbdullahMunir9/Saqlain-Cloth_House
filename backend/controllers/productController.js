@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import Item from '../models/Item.js';
 
 // @desc    Get all products
 // @route   GET /api/products
@@ -59,6 +60,9 @@ export const deleteProduct = async (req, res) => {
         const product = await Product.findById(req.params.id);
 
         if (product) {
+            // Remove its inventory records as well, so a deleted master product
+            // cannot remain visible in stock or be sold later.
+            await Item.deleteMany({ itemName: product.name });
             await Product.deleteOne({ _id: req.params.id });
             res.json({ message: 'Product removed' });
         } else {
