@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, Save } from 'lucide-react';
 import API_BASE_URL from '../api';
+import CurrentBillModal from '../components/Print/CurrentBillModal';
 
 const BuyItems = () => {
     const { t } = useTranslation();
@@ -23,6 +24,7 @@ const BuyItems = () => {
     const [paidNow, setPaidNow] = useState(0);
     const [notes, setNotes] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [bill, setBill] = useState(null);
 
     const [sellerItems, setSellerItems] = useState([]);
     const [masterProducts, setMasterProducts] = useState([]);
@@ -113,6 +115,8 @@ const BuyItems = () => {
         try {
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
             let sellerId = selectedSeller;
+            let sellerName = sellers.find((seller) => seller._id === selectedSeller)?.name || '';
+            let sellerPhone = sellers.find((seller) => seller._id === selectedSeller)?.phone || '';
 
             if (isNewSeller) {
                 const { data: newSeller } = await axios.post(`${API_BASE_URL}/sellers`, {
@@ -120,6 +124,8 @@ const BuyItems = () => {
                     phone: newSellerPhone
                 }, config);
                 sellerId = newSeller._id;
+                sellerName = newSeller.name;
+                sellerPhone = newSeller.phone;
             }
 
             if (!sellerId) {
@@ -127,7 +133,7 @@ const BuyItems = () => {
                 return;
             }
 
-            await axios.post(`${API_BASE_URL}/transactions`, {
+            const { data: createdTransaction } = await axios.post(`${API_BASE_URL}/transactions`, {
                 type: 'buy',
                 entityId: sellerId,
                 date,
@@ -136,7 +142,7 @@ const BuyItems = () => {
                 notes
             }, config);
 
-            alert('Purchase saved successfully!');
+            setBill({ transaction: createdTransaction, entityName: sellerName, entityPhone: sellerPhone });
             // Reset form
             setItems([{ itemName: '', quantity: 1, pricePerUnit: 0 }]);
             setPaidNow(0);
@@ -285,6 +291,7 @@ const BuyItems = () => {
                     </button>
                 </div>
             </form>
+            <CurrentBillModal bill={bill} onClose={() => setBill(null)} />
         </div>
     );
 };

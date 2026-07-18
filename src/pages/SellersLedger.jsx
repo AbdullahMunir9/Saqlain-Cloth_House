@@ -24,6 +24,8 @@ const SellersLedger = () => {
 
     // Ledger detailed states
     const [ledgerData, setLedgerData] = useState([]);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     useEffect(() => {
         fetchSellers();
@@ -43,6 +45,10 @@ const SellersLedger = () => {
     };
 
     const handleViewLedger = async (seller) => {
+        if (selectedSeller?._id !== seller._id) {
+            setStartDate('');
+            setEndDate('');
+        }
         setSelectedSeller(seller);
         setShowLedgerModal(true);
         try {
@@ -134,6 +140,11 @@ const SellersLedger = () => {
     };
 
     const filteredSellers = sellers.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.phone.includes(search));
+    const filteredLedgerData = ledgerData.filter((record) => {
+        const recordDate = new Date(record.date);
+        const localDate = `${recordDate.getFullYear()}-${String(recordDate.getMonth() + 1).padStart(2, '0')}-${String(recordDate.getDate()).padStart(2, '0')}`;
+        return (!startDate || localDate >= startDate) && (!endDate || localDate <= endDate);
+    });
 
     return (
         <div className="space-y-6">
@@ -274,8 +285,19 @@ const SellersLedger = () => {
                             </div>
 
                             <div className="flex-1 overflow-y-auto p-2 sm:p-6 bg-white overflow-x-hidden">
-                                {ledgerData.length === 0 ? (
-                                    <p className="text-center text-gray-500 py-10">No transactions recorded yet.</p>
+                                <div className="flex flex-col sm:flex-row gap-3 sm:items-end justify-between mb-4 print:hidden">
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <label className="text-xs font-semibold text-gray-600">From
+                                            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="block mt-1 p-2 border border-gray-300 rounded-md text-sm" />
+                                        </label>
+                                        <label className="text-xs font-semibold text-gray-600">To
+                                            <input type="date" value={endDate} min={startDate || undefined} onChange={(e) => setEndDate(e.target.value)} className="block mt-1 p-2 border border-gray-300 rounded-md text-sm" />
+                                        </label>
+                                    </div>
+                                    {(startDate || endDate) && <button onClick={() => { setStartDate(''); setEndDate(''); }} className="text-sm font-medium text-indigo-600 hover:text-indigo-800">Clear dates</button>}
+                                </div>
+                                {filteredLedgerData.length === 0 ? (
+                                    <p className="text-center text-gray-500 py-10">{ledgerData.length === 0 ? 'No transactions recorded yet.' : 'No records found for the selected dates.'}</p>
                                 ) : (
                                     <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 -mx-2 sm:mx-0">
                                         <table className="w-full text-left text-xs sm:text-sm min-w-[700px]">
@@ -291,7 +313,7 @@ const SellersLedger = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {ledgerData.map((record, idx) => (
+                                                {filteredLedgerData.map((record, idx) => (
                                                     <tr key={record._id} className="border-b border-gray-100 hover:bg-gray-50">
                                                         <td className="p-3 whitespace-nowrap text-gray-600">{new Date(record.date).toLocaleDateString()}</td>
                                                         <td className="p-3">
@@ -396,7 +418,7 @@ const SellersLedger = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {ledgerData.map((record, idx) => (
+                                    {filteredLedgerData.map((record, idx) => (
                                         <tr key={record._id} className="text-slate-700 font-semibold border-b border-slate-205 hover:bg-slate-50">
                                             <td className="p-2 text-slate-400">{idx + 1}</td>
                                             <td className="p-2 whitespace-nowrap">{new Date(record.date).toLocaleDateString()}</td>
